@@ -1,11 +1,18 @@
 import pygame
 import sys
 
-# --- Vulnerable Input: Paddle speed from command-line ---
-try:
-    paddle_speed = int(sys.argv[1])  # ⚠️ No validation: user can input very large or negative values
-except (IndexError, ValueError):
-    paddle_speed = 5  # fallback default
+# --- Vulnerable Input Validation Fix ---
+def validate_input(input_value):
+    try:
+        value = int(input_value)
+        if value <= 0 or value > 100:
+            raise ValueError("Input out of range. Must be between 1 and 100.")
+        return value
+    except ValueError:
+        print("Invalid input. Please provide a number between 1 and 100.")
+        sys.exit(1)
+
+paddle_speed = validate_input(sys.argv[1])
 
 # --- Pygame Setup ---
 pygame.init()
