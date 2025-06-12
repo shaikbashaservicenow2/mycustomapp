@@ -2,23 +2,19 @@ import pygame
 import sys
 
 # --- Vulnerable Input Validation Fix ---
-def validate_input(input_value):
-    try:
-        value = int(input_value)
-        if value <= 0 or value > 100:
-            raise ValueError("Input out of range. Must be between 1 and 100.")
-        return value
-    except ValueError:
-        print("Invalid input. Please provide a number between 1 and 100.")
-        sys.exit(1)
+try:
+    user_input = sys.argv[1]
+    if not user_input.isdigit():
+        raise ValueError("Invalid input: Input must be a positive integer.")
+    paddle_speed = int(user_input)
+except (IndexError, ValueError):
+    paddle_speed = 5  # fallback default
 
-paddle_speed = validate_input(sys.argv[1])
-
-# --- Pygame Setup ---
+# --- PyGame Setup ---
 pygame.init()
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Vulnerable Ping Pong")
+pygame.display.set_caption("Secure Ping Pong")
 
 # Game Elements
 ball = pygame.Rect(width // 2, height // 2, 15, 15)
@@ -30,33 +26,35 @@ running = True
 clock = pygame.time.Clock()
 
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    try:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    # Paddle Movement
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP] and paddle.top > 0:
-        paddle.y -= paddle_speed
-    if keys[pygame.K_DOWN] and paddle.bottom < height:
-        paddle.y += paddle_speed
+        # Paddle Movement
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP] and paddle.top > 0:
+            paddle.y -= paddle_speed
+        if keys[pygame.K_DOWN] and paddle.bottom < height:
+            paddle.y += paddle_speed
 
-    # Ball Movement
-    ball.x += ball_speed[0]
-    ball.y += ball_speed[1]
+        # Ball Movement
+        ball.x += ball_speed[0]
+        ball.y += ball_speed[1]
 
-    if ball.top <= 0 or ball.bottom >= height:
-        ball_speed[1] *= -1
-    if ball.left <= 0 or ball.right >= width:
-        ball_speed[0] *= -1
-    if ball.colliderect(paddle):
-        ball_speed[0] *= -1
+        if ball.top <= 0 or ball.bottom >= height:
+            ball_speed[1] *= -1
+        if ball.left <= 0 or ball.right >= width:
+            ball_speed[0] *= -1
+        if ball.colliderect(paddle):
+            ball_speed[0] *= -1
 
-    # Drawing
-    screen.fill((0, 0, 0))
-    pygame.draw.ellipse(screen, (255, 255, 255), ball)
-    pygame.draw.rect(screen, (255, 255, 255), paddle)
-    pygame.display.flip()
-    clock.tick(60)
-
+        # Drawing
+        screen.fill((0, 0, 0))
+        pygame.draw.ellipse(screen, (255, 255, 255), ball)
+        pygame.draw.rect(screen, (255, 255, 255), paddle)
+        pygame.display.flip()
+        clock.tick(60)
+    except Exception as e:
+        print(f"Error occurred: {e}")
 pygame.quit()
