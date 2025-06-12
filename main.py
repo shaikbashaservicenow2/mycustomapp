@@ -1,11 +1,35 @@
 import pygame
 import sys
+import logging
+
+# Set up logging
+logging.basicConfig(filename='game.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
 
 # --- Vulnerable Input: Paddle speed from command-line ---
-try:
-    paddle_speed = int(sys.argv[1])  # ⚠️ No validation: user can input very large or negative values
-except (IndexError, ValueError):
-    paddle_speed = 5  # fallback default
+def get_paddle_speed():
+    default_speed = 5
+    min_speed = 1
+    max_speed = 20
+    try:
+        if len(sys.argv) > 1:
+            arg = sys.argv[1]
+            if arg.isdigit():
+                speed = int(arg)
+                if min_speed <= speed <= max_speed:
+                    return speed
+                else:
+                    print(f"Paddle speed must be between {min_speed} and {max_speed}. Using default.")
+                    logging.warning(f"Paddle speed {speed} out of range. Using default.")
+            else:
+                print("Paddle speed must be a positive integer. Using default.")
+                logging.warning(f"Invalid paddle speed input: {arg}. Using default.")
+        return default_speed
+    except Exception as e:
+        print("Error processing paddle speed. Using default.")
+        logging.error(f"Exception in paddle speed input: {e}")
+        return default_speed
+
+paddle_speed = get_paddle_speed()
 
 # --- Pygame Setup ---
 pygame.init()
