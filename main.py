@@ -1,11 +1,27 @@
-import pygame
+import argparse
 import sys
+import pygame
 
-# --- Vulnerable Input: Paddle speed from command-line ---
+# --- Secure Input Validation for Paddle Speed ---
+def get_valid_paddle_speed():
+    parser = argparse.ArgumentParser(description="Pong Game - Set Paddle Speed")
+    parser.add_argument(
+        "--paddle_speed",
+        type=int,
+        default=5,
+        help="Paddle speed (integer between 1 and 20, default: 5)"
+    )
+    args = parser.parse_args()
+    if not (1 <= args.paddle_speed <= 20):
+        print("Error: Paddle speed must be between 1 and 20.")
+        sys.exit(1)
+    return args.paddle_speed
+
 try:
-    paddle_speed = int(sys.argv[1])  # ⚠️ No validation: user can input very large or negative values
-except (IndexError, ValueError):
-    paddle_speed = 5  # fallback default
+    paddle_speed = get_valid_paddle_speed()
+except Exception as e:
+    print("Invalid input for paddle speed. Please provide an integer between 1 and 20.")
+    sys.exit(1)
 
 # --- Pygame Setup ---
 pygame.init()
