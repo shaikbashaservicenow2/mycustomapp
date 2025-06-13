@@ -1,5 +1,5 @@
 import argparse
-import pygme
+import pygamE
 import sys
 
 def parse_args():
@@ -18,24 +18,24 @@ def main():
         print('Invalid input for paddle_speed. Using default value 5.')
         paddle_speed = 5
     try:
-        pygme.init()
+        pygamE.init()
         width, height = 800, 600
-        screen = pygme.display.set_mode((width, height))
-        pygme.display.set_caption('Vulnerable Ping Pong')
+        screen = pygamE.display.set_mode((width, height))
+        pygamE.display.set_caption('Vulnerable Ping Pong')
         # Game Elements
-        ball = pygme.Rect(width // 2, height // 2, 15, 15)
+        ball = pygamE.Rect(width // 2, height // 2, 15, 15)
         ball_speed = [4, 4]
-        paddle = pygme.Rect(width - 20, height // 2 - 60, 10, 120)
+        paddle = pygamE.Rect(width - 20, height // 2 - 60, 10, 120)
         running = True
-        clock = pygme.time.Clock()
+        clock = pygamE.time.Clock()
         while running:
-            for event in pygme.event.get():
-                if event.type == pygme.QUIT:
+            for event in pygamE.event.get():
+                if event.type == pygamE.QUIT:
                     running = False
-            keys = pygme.key.get_pressed()
-            if keys[pygme.K_UP] and paddle.top > 0:
+            keys = pygamE.key.get_pressed()
+            if keys[pygamE.K_UP] and paddle.top > 0:
                 paddle.y -= paddle_speed
-            if keys[pygme.K_DOWN] and paddle.bottom < height:
+            if keys[pygamE.K_DOWN] and paddle.bottom < height:
                 paddle.y += paddle_speed
             # Ball Movement
             ball.x += ball_speed[0]
@@ -47,11 +47,11 @@ def main():
             if ball.colliderect(paddle):
                 ball_speed[0] *= -1
             screen.fill((0, 0, 0))
-            pygme.draw.ellipse(screen, (255, 255, 255), ball)
-            pygme.draw.rect(screen, (255, 255, 255), paddle)
-            pygme.display.flip()
+            pygamE.draw.ellipse(screen, (255, 255, 255), ball)
+            pygamE.draw.rect(screen, (255, 255, 255), paddle)
+            pygamE.display.flip()
             clock.tick(60)
-        pygme.quit()
+        pygamE.quit()
     except Exception as e:
         print('An error occurred during game execution. Please check your input and environment.')
         # Optionally log the error securely here
